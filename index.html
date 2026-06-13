@@ -193,19 +193,25 @@
             
             /* Correções de Layout Fixos */
             svg { max-width: 100% !important; height: auto !important; }
-            .hud-wrapper { width: 100% !important; max-width: 100vw !important; height: auto !important; padding: 10px !important; box-sizing: border-box !important; }
-            .interactive-widget { width: 100% !important; max-width: 100vw !important; box-sizing: border-box !important; margin-bottom: 20px !important; padding: 10px !important; }
+            .hud-wrapper { width: 100% !important; max-width: 100% !important; height: auto !important; padding: 10px !important; box-sizing: border-box !important; }
+            .interactive-widget { width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; margin-bottom: 20px !important; padding: 10px !important; }
             
             /* Correções de Margens Forçadas */
             .box-magenta-left, p { margin-left: 0 !important; width: 100% !important; box-sizing: border-box !important; }
             
             /* Correções de Tabelas e Fórmulas */
             .cyber-table { font-size: 0.6em !important; display: block; overflow-x: auto; white-space: nowrap; }
-            .formula-box { padding: 10px !important; max-width: 95vw !important; overflow-x: auto; }
+            .formula-box { padding: 10px !important; max-width: 100% !important; overflow-x: auto; }
             .katex { font-size: 1.1em !important; }
             
             /* Correção da Imagem do Matemático */
             img[alt="Matemático Empírico"] { position: relative !important; right: auto !important; max-width: 150px !important; height: auto !important; display: block !important; margin: 0 auto 15px auto !important; }
+            
+            /* Tweaks Visuais Solicitados */
+            #header-logos { flex-direction: row !important; flex-wrap: wrap !important; justify-content: space-between !important; }
+            #header-logos > div:nth-child(2) { order: 3; width: 100%; margin-top: 20px; }
+            .hide-mobile { display: none !important; }
+            .obrigado-title { font-size: 2.8em !important; letter-spacing: 5px !important; margin: 20px !important; }
         }
     </style>
 </head>
@@ -217,7 +223,7 @@
             <section style="text-align: center; padding-top: 2%;">
                 
                 <!-- Cabeçalho Institucional -->
-                <div class="flex-row" style="align-items: center; justify-content: space-between; margin-bottom: 50px; width: 100%;">
+                <div id="header-logos" class="flex-row" style="align-items: center; justify-content: space-between; margin-bottom: 50px; width: 100%;">
                     
                     <!-- Logos Esq (IFM + UFPEL) -->
                     <div style="display: flex; gap: 15px; align-items: center;">
@@ -850,7 +856,7 @@
                         </div>
 
                         <!-- Conector central dinâmico SVG -->
-                        <div style="width: 60px; position: relative;">
+                        <div class="hide-mobile" style="width: 60px; position: relative;">
                             <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; overflow: visible;">
                                 <defs>
                                     <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
@@ -947,7 +953,10 @@
                     </div>
 
                     <div class="formula-box fragment" style="padding: 15px 30px; margin: 0 auto; display: block; width: fit-content; border-color: var(--magenta); box-shadow: 0 0 10px rgba(255,0,255,0.4);">
-                        <div class="katex" style="font-size: 1.1em !important; color: var(--magenta) !important; text-shadow: 0 0 10px var(--magenta);">$$L'(-2000x^{-2}) \Rightarrow -2 \cdot (-2000x^{-2-1}) \Rightarrow 4000x^{-3} \Rightarrow \frac{4000}{x^3}$$</div>
+                        <div class="katex" style="font-size: 1.1em !important; color: var(--magenta) !important; text-shadow: 0 0 10px var(--magenta);">
+                            $$L'(-2000x^{-2}) \Rightarrow -2 \cdot (-2000x^{-2-1})$$
+                            $$\Rightarrow 4000x^{-3} \Rightarrow \frac{4000}{x^3}$$
+                        </div>
                     </div>
                 </div>
             </section>
@@ -1275,7 +1284,7 @@
                 <div style="height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column;">
                     <div class="hud-wrapper">
                         <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
-                        <h1 class="title-cyan" style="font-size: 5em !important; letter-spacing: 15px; margin: 40px !important;">OBRIGADO</h1>
+                        <h1 class="title-cyan obrigado-title" style="font-size: 5em !important; letter-spacing: 15px; margin: 40px !important;">OBRIGADO</h1>
                     </div>
                 </div>
             </section>
