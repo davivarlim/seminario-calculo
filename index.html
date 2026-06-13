@@ -1,0 +1,1333 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Otimização de Medidas</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cyan: #00ffff;
+            --magenta: #ff00ff;
+            --white: #ffffff;
+            --bg: #050505;
+        }
+        
+        .reveal.overview .fragment {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        html, body, .reveal-viewport, .reveal {
+            background-color: var(--bg) !important;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) !important;
+            background-size: 30px 30px !important;
+        }
+        
+        .reveal::after {
+            content: '';
+            position: absolute;
+            top: 15px; left: 15px; right: 15px; bottom: 15px;
+            border: 5px solid var(--white);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .reveal *:not(.katex):not(.katex *) {
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+        
+        .reveal {
+            font-size: 26px;
+            color: var(--white) !important;
+        }
+        
+        .reveal .slides section {
+            text-align: left;
+            padding: 40px;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+            text-transform: uppercase;
+        }
+        
+        .reveal .title-cyan {
+            color: var(--cyan) !important;
+            text-shadow: 0 0 10px var(--cyan);
+            font-size: 1.8em !important;
+            margin-bottom: 20px !important;
+            font-weight: bold !important;
+            margin-top: 10px;
+        }
+
+        .cyan { color: var(--cyan) !important; text-shadow: 0 0 5px var(--cyan); }
+        .magenta { color: var(--magenta) !important; text-shadow: 0 0 5px var(--magenta); }
+        .white { color: var(--white) !important; }
+
+        .box-cyan-left {
+            border-left: 4px solid var(--cyan);
+            padding-left: 15px;
+            margin: 20px 0;
+            line-height: 1.5;
+        }
+        .box-cyan-left .box-title {
+            color: var(--cyan) !important;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            text-shadow: 0 0 5px var(--cyan);
+        }
+        
+        .box-magenta-left {
+            border-left: 4px solid var(--magenta);
+            padding-left: 15px;
+            margin: 20px 0;
+            line-height: 1.5;
+        }
+
+        .box-dashed-magenta {
+            border: 1px dashed var(--magenta);
+            padding: 15px;
+            margin: 20px 0;
+            background: rgba(255, 0, 255, 0.05);
+            font-size: 0.9em;
+        }
+        .box-dashed-cyan {
+            border: 1px dashed var(--cyan);
+            padding: 15px;
+            margin: 20px 0;
+            background: rgba(0, 255, 255, 0.05);
+            font-size: 0.9em;
+        }
+        .box-dashed-cyan .box-title {
+            color: var(--cyan) !important;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .formula-box {
+            border: 2px solid var(--magenta);
+            box-shadow: 0 0 15px rgba(255,0,255,0.4), inset 0 0 10px rgba(255,0,255,0.2);
+            padding: 20px 40px;
+            display: inline-block;
+            margin: 15px auto;
+            text-align: center;
+            box-sizing: border-box; 
+        }
+        .formula-box .box-title {
+            font-size: 0.5em;
+            display: block;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            color: var(--magenta) !important;
+        }
+        .formula-box .katex {
+            color: var(--magenta) !important;
+            text-shadow: 0 0 10px var(--magenta);
+            font-size: 1.6em;
+        }
+
+        .list-numbered { list-style: none; padding: 0; margin: 20px 0; counter-reset: list-counter; line-height: 1.8; }
+        .list-numbered li { margin-bottom: 10px; }
+        .list-numbered li::before {
+            content: '[0' counter(list-counter) '] ';
+            counter-increment: list-counter;
+            color: var(--magenta) !important;
+            text-shadow: 0 0 5px var(--magenta);
+            margin-right: 10px;
+        }
+
+        .list-bullet { list-style: none !important; padding: 0; margin: 10px 0; line-height: 1.6; }
+        .list-bullet li::before {
+            content: '> ';
+            color: var(--magenta) !important;
+            text-shadow: 0 0 5px var(--magenta);
+            margin-right: 10px;
+        }
+
+        .cyber-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85em; }
+        .cyber-table th { color: var(--cyan) !important; padding: 15px; border-bottom: 1px solid rgba(0, 255, 255, 0.3); text-align: center; text-shadow: 0 0 5px var(--cyan); }
+        .cyber-table td { padding: 15px; text-align: center; color: var(--white) !important; }
+        .cyber-table tr:nth-child(even) { background-color: rgba(255, 0, 255, 0.05); }
+
+        .hud-wrapper { position: relative; display: inline-block; padding: 15px; margin: 10px 0; }
+        .hud-wrapper .tl { position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-top: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
+        .hud-wrapper .tr { position: absolute; top: 0; right: 0; width: 20px; height: 20px; border-top: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
+        .hud-wrapper .bl { position: absolute; bottom: 0; left: 0; width: 20px; height: 20px; border-bottom: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
+        .hud-wrapper .br { position: absolute; bottom: 0; right: 0; width: 20px; height: 20px; border-bottom: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
+
+        .cyber-img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+        .flex-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 30px; }
+        .flex-col { flex: 1; }
+        .flex-center { display: flex; align-items: center; justify-content: center; width: 100%; flex-direction: column; }
+        .arrow { color: var(--cyan) !important; text-shadow: 0 0 5px var(--cyan); margin: 0 15px; font-weight: bold; }
+        
+        .enunciado-item {
+            color: var(--white);
+            background-color: rgba(255, 0, 255, 0.15);
+            border-left: 4px solid var(--magenta);
+            padding: 10px 15px;
+            font-size: 0.85em;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        .enunciado-item strong {
+            color: var(--magenta);
+            margin-right: 10px;
+        }
+
+        /* Otimizações Mobile */
+        @media (max-width: 768px) {
+            .flex-row { flex-direction: column !important; align-items: center !important; gap: 20px !important; }
+            .flex-col { width: 100% !important; text-align: center !important; }
+            .hud-wrapper, .interactive-widget { max-width: 95vw !important; overflow-x: auto; margin-bottom: 20px; }
+            .cyber-table { font-size: 0.7em !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Slide 1: Título -->
+            <section style="text-align: center; padding-top: 2%;">
+                
+                <!-- Cabeçalho Institucional -->
+                <div class="flex-row" style="align-items: center; justify-content: space-between; margin-bottom: 50px; width: 100%;">
+                    
+                    <!-- Logos Esq (IFM + UFPEL) -->
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <img src="media/Logo 1.png" alt="IFM" style="max-height: 90px; width: auto; margin: 0; background: transparent; border: none; box-shadow: none;">
+                        <img src="media/Logo 2.png" alt="UFPEL" style="max-height: 110px; width: auto; margin: 0; background: transparent; border: none; box-shadow: none;">
+                    </div>
+                    
+                    <!-- Texto Central Institucional -->
+                    <div style="text-align: center; font-size: 0.6em; line-height: 1.4; color: var(--white); flex: 1; padding: 0 20px;">
+                        <strong style="color: var(--cyan); letter-spacing: 1px; font-size: 1.1em; text-shadow: 0 0 5px var(--cyan);">UNIVERSIDADE FEDERAL DE PELOTAS</strong><br>
+                        Instituto de Física e Matemática<br>
+                        Departamento de Educação Matemática<br>
+                        Curso de Licenciatura em Matemática a Distância
+                    </div>
+                    
+                    <!-- Logo Dir (CLMD) -->
+                    <div style="display: flex; align-items: center;">
+                        <img src="media/Logo 3.png" alt="CLMD" style="max-height: 110px; width: auto; margin: 0; background: transparent; border: none; box-shadow: none;">
+                    </div>
+                </div>
+
+                <h1 class="title-cyan" style="font-size: 3em !important; margin-bottom: 20px !important;">OTIMIZAÇÃO DE MEDIDAS</h1>
+                <div class="magenta" style="font-size: 1.5em; margin-bottom: 50px;">Seminário Investigativo em Cálculo A</div>
+                
+                <div class="flex-row" style="justify-content: center; gap: 80px; text-align: left; font-size: 0.9em;">
+                    <ul class="list-bullet" style="color: white;">
+                        <li>Helem Vanessa da Silva Pinto</li>
+                        <li>Ariane Teixeira Pereira</li>
+                        <li>Daniel Cemin Militão</li>
+                    </ul>
+                    <ul class="list-bullet" style="color: white;">
+                        <li>Davi Vargas Limeira</li>
+                        <li>Miguel Ângelo Chagas Neumann</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Slide 2: Problema 1 -->
+            <section>
+                <h2 class="title-cyan">PROBLEMA 1: EXPANSÃO DA SEDE</h2>
+                
+                <div class="flex-row" style="align-items: center;">
+                    <div class="flex-col" style="flex: 1.2;">
+                        <p class="fragment" style="font-size: 0.8em; line-height: 1.5; margin-bottom: 30px; text-align: justify;">
+                            <span style="font-style: italic; color: #00ff00; text-shadow: 0 0 8px #00ff00; font-weight: bold;">Problema 1:</span> Uma empresa de construções acrescentou uma área retangular de <span class="white" style="font-weight:bold;">mil metros quadrados</span> à sua sede. Três lados da área estão cercados. O lado da sede que é adjacente à área mede <span class="white" style="font-weight:bold;">100 metros</span>, e uma parte desse lado é utilizada como o quarto lado da área acrescentada. Sejam <span class="magenta" style="font-weight:bold;">x</span> e <span class="magenta" style="font-weight:bold;">y</span> as dimensões da área retangular, onde <span class="magenta" style="font-weight:bold;">x</span> é medido paralelamente à sede, e <span class="magenta" style="font-weight:bold;">L</span> o comprimento da cerca necessária para essas dimensões.
+                        </p>
+                        
+                        <div class="box-dashed-magenta fragment">
+                            <ul class="list-bullet" style="margin: 0;">
+                                <li class="fragment"><span class="magenta">x :</span> Dimensão paralela à sede</li>
+                                <li class="fragment"><span class="magenta">y :</span> Dimensões laterais</li>
+                                <li class="fragment"><span class="magenta">L :</span> Comprimento total da cerca</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-col fragment" style="flex: 1.2; text-align: center;">
+                        <div class="hud-wrapper" style="display: inline-block; width: 450px; height: 320px; background: #0a0a0a; position: relative;">
+                            <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
+                            
+                            <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 40px;">
+                                <!-- Sede da Empresa -->
+                                <div style="width: 400px; height: 45px; background: #6495ED; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 0.9em; color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; z-index: 2; text-align: center; box-sizing: border-box;">
+                                    SEDE DA EMPRESA (100 metros)
+                                </div>
+                                
+                                <!-- Cercado Estático -->
+                                <div style="width: 260px; height: 160px; border: 3px dashed #ffcc00; border-top: none; background-color: rgba(255, 204, 0, 0.15); position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                                    
+                                    <div style="font-weight: bold; text-shadow: 1px 1px 3px #000; color: #fff; text-align: center; line-height: 1.2; font-size: 0.85em;">
+                                        ÁREA CERCADA<br>1000 m²
+                                    </div>
+                                    
+                                    <!-- Variáveis -->
+                                    <div style="position: absolute; right: 100%; margin-right: 15px; top: 50%; transform: translateY(-50%); color: var(--magenta); font-weight: bold; font-size: 1.2em; text-shadow: 0 0 5px var(--magenta);">y</div>
+                                    <div style="position: absolute; left: 100%; margin-left: 15px; top: 50%; transform: translateY(-50%); color: var(--magenta); font-weight: bold; font-size: 1.2em; text-shadow: 0 0 5px var(--magenta);">y</div>
+                                    <div style="position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); color: var(--magenta); font-weight: bold; font-size: 1.2em; text-shadow: 0 0 5px var(--magenta);">x</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: Equacionando -->
+            <section>
+                <h2 class="title-cyan">EQUACIONANDO O PERÍMETRO (L)</h2>
+                
+                <div class="box-cyan-left fragment">
+                    <span class="box-title">TEORIA FUNDAMENTAL</span>
+                    O <span class="cyan">Perímetro</span> de uma figura geométrica plana é obtido pela soma dos seus lados externos.
+                </div>
+                
+                <div class="flex-row" style="align-items: center;">
+                    <div class="flex-col" style="flex: 1.5;">
+                        <ul class="list-numbered">
+                            <li class="fragment">Neste caso, apenas <span class="cyan">3 lados</span> serão cercados.</li>
+                            <li class="fragment">Um dos lados (x) aproveitará a parede da sede.</li>
+                            <li class="fragment">L = Comprimento total da cerca necessária.</li>
+                        </ul>
+                    </div>
+                    <div class="flex-col fragment" style="flex: 1; display: flex; justify-content: center; align-items: center;">
+                        <div class="formula-box" style="padding: 30px 60px;">
+                            <div class="katex" style="font-size: 2.2em !important;">$$L = x + 2y$$</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 4: Relação de Área -->
+            <section>
+                <h2 class="title-cyan">RELAÇÃO DE ÁREA E RESTRIÇÃO</h2>
+                
+                <div class="box-cyan-left fragment">
+                    <span class="box-title">DEFINIÇÃO GEOMÉTRICA</span>
+                    A área de uma figura geométrica plana (retângulo) é obtida através do <span class="cyan">produto de suas dimensões</span>.
+                </div>
+                
+                <div class="flex-center fragment" style="margin-top: 40px;">
+                    <div class="magenta fragment" style="letter-spacing: 2px; font-size: 0.8em; margin-bottom: -10px;">RESTRIÇÃO DE PROJETO</div>
+                    <div class="formula-box fragment">
+                        $$x \cdot y = 1000$$
+                    </div>
+                    <div class="fragment" style="font-size: 1.2em;">Área Total Fixa: <span class="cyan">1.000 m²</span></div>
+                </div>
+            </section>
+
+            <!-- Slide 5: Expressando L (Ajustado verticalmente de forma extrema) -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.5em !important; margin-bottom: 10px !important;">UNIFICANDO A FUNÇÃO (L)</h2>
+                
+                <div class="enunciado-item fragment" style="margin-bottom: 15px; padding: 5px 10px; font-size: 0.7em; display: block;">
+                    <strong>b)</strong> Encontre uma fórmula que expresse $L$ somente em termos de $x$:
+                </div>
+                
+                <div class="flex-row" style="align-items: center; gap: 30px;">
+                    <div class="flex-col" style="flex: 1;">
+                        <div class="box-magenta-left fragment" style="margin: 0 0 15px 0; padding-top: 5px; padding-bottom: 5px;">
+                            <span class="box-title" style="color:var(--magenta) !important; font-size: 0.85em; margin-bottom: 5px;">ISOLANDO VARIÁVEL Y</span>
+                            <div style="font-size: 0.85em; margin-top: 5px;">$$x \cdot y = 1000 \quad \rightarrow \quad \textcolor{#00ff00}{y = \frac{1000}{x}}$$</div>
+                        </div>
+                        
+                        <p class="fragment" style="font-size: 0.85em; line-height: 1.5; margin: 0;">
+                            Substituímos <span class="magenta">$y$</span> na equação original do perímetro:
+                        </p>
+                    </div>
+                    
+                    <div class="flex-col" style="flex: 1.2; text-align: center;">
+                        <div class="formula-box fragment" style="padding: 2px 15px; margin: 0 auto 2px auto; display: block; width: fit-content; border-color: rgba(255,0,255,0.5); box-shadow: 0 0 5px rgba(255,0,255,0.2);">
+                            <span class="box-title" style="margin-bottom: 0px; font-size: 0.6em;">EQUAÇÃO BASE</span>
+                            <div class="katex" style="font-size: 0.9em !important;">$$L = x + 2y$$</div>
+                        </div>
+                        <div class="arrow fragment" style="margin: 0; font-size: 0.6em; display: block;">↓</div>
+                        <div class="formula-box fragment" style="padding: 2px 15px; margin: 2px auto; display: block; width: fit-content;">
+                            <div class="katex" style="font-size: 0.9em !important;">$$L(x) = x + 2\left(\textcolor{#00ff00}{\frac{1000}{x}}\right)$$</div>
+                        </div>
+                        <div class="arrow fragment" style="margin: 0; font-size: 0.6em; display: block;">↓</div>
+                        <div class="formula-box fragment" style="border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,255,255,0.4); padding: 2px 15px; margin: 2px auto 0 auto; display: block; width: fit-content;">
+                            <span class="box-title" style="color:var(--cyan) !important; margin-bottom: 0px; font-size: 0.6em;">FUNÇÃO OBJETIVO</span>
+                            <div class="katex" style="color: var(--cyan) !important; text-shadow: 0 0 10px var(--cyan); font-size: 1em !important;">$$L(x) = x + \frac{2000}{x}$$</div>
+                        </div>
+                        <div class="fragment" style="font-size: 0.75em; color: #00ff00; text-shadow: 0 0 5px #00ff00; margin-top: 3px; text-transform: none; text-align: center; font-weight: bold;">Fórmula L em termos de x</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5.5: Domínio da Função -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.5em !important; margin-bottom: 10px !important;">DOMÍNIO DA FUNÇÃO</h2>
+                
+                <div class="enunciado-item fragment" style="margin-bottom: 30px; padding: 5px 10px; font-size: 0.7em; display: block;">
+                    <strong>c)</strong> Qual é o domínio da função em (b)?
+                </div>
+                
+                <div style="text-align: left; font-size: 0.8em; line-height: 1.6;">
+                    <p class="fragment" style="margin-bottom: 15px;">
+                        <span class="magenta">⇒</span> <strong style="color: var(--cyan);">Definindo o Domínio:</strong>
+                    </p>
+                    
+                    <p class="fragment" style="text-align: justify; margin-bottom: 15px;">
+                        <span class="magenta">⇒</span> Por se tratar de uma dimensão física real, a variável <span class="magenta">$x$</span> deve ser maior que <span style="color: #ff3333; font-weight: bold; text-shadow: 0 0 5px #ff3333;">zero ($x > 0$)</span> e seu comprimento não pode ultrapassar <span style="color: #ff3333; font-weight: bold; text-shadow: 0 0 5px #ff3333;">100 metros</span> que é o espaço disponível da estrutura (parede da sede da empresa), portanto temos que: <span style="color: #ff3333; font-weight: bold; text-shadow: 0 0 5px #ff3333;">$x \le 100$</span>.
+                    </p>
+                    
+                    <p class="fragment" style="margin-bottom: 15px;">
+                        <span class="magenta">⇒</span> Deste modo podemos concluir que o Domínio da função é:
+                    </p>
+                    
+                    <p class="fragment" style="color: #ff3333; font-weight: bold; text-shadow: 0 0 5px #ff3333; margin-bottom: 20px;">
+                        $D =$ conjunto de valores reais válidos
+                    </p>
+                    
+                    <div class="formula-box fragment" style="border-color: #ffcc00; box-shadow: 0 0 10px rgba(255,204,0,0.5); padding: 10px 20px; margin: 0 auto; display: block; width: fit-content; background: rgba(255,204,0,0.1);">
+                        <div class="katex" style="color: #ffcc00 !important; text-shadow: 0 0 10px #ffcc00; font-size: 1.1em !important;">
+                            $$D = \{x \in \mathbb{R} \mid 0 < x \le 100\}$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5.6: Simulação Interativa -->
+            <!-- Slide 5.6: Simulação Interativa -->
+            <section onmousedown="event.stopPropagation();" onclick="event.stopPropagation();">
+                <h2 class="title-cyan" style="font-size: 1.4em !important; margin-bottom: 15px !important;">SIMULAÇÃO DO PONTO IDEAL</h2>
+                
+                <div class="interactive-widget" style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Segoe UI', Arial, sans-serif !important; background: rgba(0,0,0,0.4); border: 2px solid var(--cyan); border-radius: 15px; padding: 25px 20px; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,255,255,0.2); position: relative;">
+                    
+                    <!-- Controle -->
+                    <div style="width: 100%; max-width: 700px; margin-bottom: 35px; text-align: center; position: relative;">
+                        <label for="x-slider-big" style="display: block; font-size: 0.9em; color: var(--white); margin-bottom: 20px; font-weight: bold;">
+                            Arraste a barra para alterar a largura <span class="magenta" style="font-family: monospace;">$x$</span>: <span id="x-val-big" style="color: #00ff00; text-shadow: 0 0 5px #00ff00; padding: 0 5px;">44.72 m</span>
+                            <span id="ideal-alert" style="color: #39ff14; font-weight: bold; background: rgba(57,255,20,0.2); padding: 2px 10px; border-radius: 5px; opacity: 0; transition: opacity 0.3s; text-shadow: 0 0 10px #39ff14; margin-left: 10px;">★ PONTO IDEAL! ★</span>
+                        </label>
+                        
+                        <div style="position: relative; width: 100%; margin: 0 auto;">
+                            <!-- Marcador Ponto Ideal (44.72m) -->
+                            <div style="position: absolute; left: 44.71%; top: 5px; width: 4px; height: 16px; background: #39ff14; z-index: 1; box-shadow: 0 0 5px #39ff14;"></div>
+                            <div style="position: absolute; left: 44.71%; top: -20px; transform: translateX(-50%); color: #39ff14; font-size: 0.65em; font-weight: bold; text-shadow: 0 0 5px #000;">Ponto Ideal (44.72m)</div>
+                            
+                            <input type="range" id="x-slider-big" min="0.01" max="100" step="0.01" value="44.72" style="width: 100%; cursor: pointer; position: relative; z-index: 2; height: 10px;">
+                        </div>
+                    </div>
+                    
+                    <!-- Visualização -->
+                    <div style="position: relative; width: 100%; max-width: 600px; height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin-bottom: 25px;">
+                        <!-- Sede -->
+                        <div style="width: 100%; height: 40px; background: #6495ED; border: 3px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 0.8em; color: #fff; font-weight: bold; z-index: 2; border-radius: 4px; text-shadow: 1px 1px 2px #000; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+                            PAREDE DA SEDE (100 m)
+                        </div>
+                        
+                        <!-- Cerca -->
+                        <div id="fence-box-big" style="width: 50%; height: 60px; background: rgba(255, 204, 0, 0.5); border: 4px dashed #ffcc00; border-top: none; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; transition: width 0.1s, height 0.1s, border-color 0.3s, background-color 0.3s;">
+                            <div style="font-size: 0.8em; color: #fff; font-weight: bold; text-align: center; text-shadow: 1px 1px 3px #000;">
+                                ÁREA<br>1000 m²
+                            </div>
+                            <div id="y-label-big" style="position: absolute; right: 100%; margin-right: 15px; top: 50%; transform: translateY(-50%); font-size: 0.85em; color: #ff00ff; font-weight: bold; text-shadow: 1px 1px 3px #000; white-space: nowrap;">y=20.0m</div>
+                            <div id="y-label-right-big" style="position: absolute; left: 100%; margin-left: 15px; top: 50%; transform: translateY(-50%); font-size: 0.85em; color: #ff00ff; font-weight: bold; text-shadow: 1px 1px 3px #000; white-space: nowrap;">y=20.0m</div>
+                            <div id="x-label-bottom-big" style="position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); font-size: 0.85em; color: #00ff00; font-weight: bold; text-shadow: 1px 1px 3px #000; white-space: nowrap;">x=50.0m</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resultado e Lembrete -->
+                    <div style="width: 100%; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; margin-top: 10px;">
+                        <!-- Lembrete do Domínio -->
+                        <div style="justify-self: center; font-size: 0.7em; color: #ffcc00; text-shadow: 0 0 5px #ffcc00; border: 1px dashed rgba(255,204,0,0.5); padding: 5px 15px; border-radius: 5px; background: rgba(0,0,0,0.5); text-align: center; margin-bottom: 5px;">
+                            <strong>Domínio de $x$:</strong><br>
+                            <span style="font-family: monospace; font-weight: normal; font-size: 1.1em;">$0 < x \le 100$</span>
+                        </div>
+                        
+                        <!-- L -->
+                        <div style="font-size: 0.85em; text-align: center; padding: 0 20px;">
+                            Comprimento total da cerca <br>
+                            <span id="l-label-big" style="font-size: 1.8em; color: var(--cyan); font-weight: bold; text-shadow: 0 0 10px var(--cyan); transition: color 0.3s, text-shadow 0.3s;">L = 90.00 m</span>
+                        </div>
+                        
+                        <!-- Coluna vazia para balancear -->
+                        <div></div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const slider = document.getElementById('x-slider-big');
+                        const fence = document.getElementById('fence-box-big');
+                        const xValDisplay = document.getElementById('x-val-big');
+                        const idealAlert = document.getElementById('ideal-alert');
+                        const yLabel = document.getElementById('y-label-big');
+                        const yLabelRight = document.getElementById('y-label-right-big');
+                        const xLabelBottom = document.getElementById('x-label-bottom-big');
+                        const lLabel = document.getElementById('l-label-big');
+
+                        function updateWidget() {
+                            if(!slider || !fence) return;
+                            let rawX = parseFloat(slider.value);
+                            
+                            // Efeito Magnético: Se chegar perto, trava no ponto exato!
+                            let x = rawX;
+                            if (Math.abs(rawX - 44.72) < 0.8) {
+                                x = 44.72;
+                            }
+                            
+                            let y = 1000 / x;
+                            let l = x + 2 * y;
+                            
+                            fence.style.width = x + '%';
+                            
+                            // Ajuste dinâmico da escala de altura:
+                            // Multiplica y por 3 para ficar bem visível, mas define uma altura mínima de 50px 
+                            // para o texto nunca vazar, e máxima de 230px para não ultrapassar o container.
+                            let visualHeight = Math.max(50, Math.min(y * 3, 230));
+                            fence.style.height = visualHeight + 'px'; 
+                            
+                            xValDisplay.innerText = x.toFixed(2) + ' m';
+                            xLabelBottom.innerText = 'x = ' + x.toFixed(2) + ' m';
+                            yLabel.innerText = 'y = ' + y.toFixed(2) + ' m';
+                            yLabelRight.innerText = 'y = ' + y.toFixed(2) + ' m';
+                            lLabel.innerText = 'L = ' + l.toFixed(2) + ' m';
+
+                            // Check ideal point (44.72 exact)
+                            if (Math.abs(x - 44.72) < 0.05) {
+                                idealAlert.style.opacity = '1';
+                                lLabel.style.color = '#39ff14';
+                                lLabel.style.textShadow = '0 0 15px #39ff14';
+                                fence.style.borderColor = '#39ff14';
+                                fence.style.backgroundColor = 'rgba(57,255,20,0.5)';
+                            } else {
+                                idealAlert.style.opacity = '0';
+                                lLabel.style.color = 'var(--cyan)';
+                                lLabel.style.textShadow = '0 0 10px var(--cyan)';
+                                fence.style.borderColor = '#ffcc00';
+                                fence.style.backgroundColor = 'rgba(255,204,0,0.5)';
+                            }
+                        }
+
+                        if(slider) {
+                            slider.addEventListener('input', updateWidget);
+                            setTimeout(updateWidget, 500); 
+                        }
+                    });
+                </script>
+            </section>
+
+            <!-- Slide 6: Tabela Empírica -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.4em !important; margin-bottom: 10px !important;">MÉTODO EMPÍRICO: TABELA DE DADOS</h2>
+                
+                <div class="enunciado-item fragment" style="margin-bottom: 15px; padding: 5px 15px; font-size: 0.7em;">
+                    <strong>d)</strong> Esboce o gráfico da função em (b) e estime as dimensões da área retangular que minimizem a quantidade de cerca necessária:
+                </div>
+                
+                <div class="box-magenta-left fragment" style="border-left-width: 6px; padding-left: 20px; margin-top: 0; margin-bottom: 25px; font-size: 0.8em; margin-left: 220px;">
+                    Testando valores empíricos para a base <span class="magenta">x</span> na função <span class="magenta">L</span> e usando a restrição de área para achar <span class="magenta">y</span>.
+                </div>
+                
+                <div style="position: relative; border: 2px solid var(--cyan); border-radius: 12px; background: rgba(0, 0, 0, 0.4); padding: 10px 20px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.15); width: fit-content; margin: 10px auto;">
+                    <!-- Imagem do Matemático perfeitamente alinhada ao topo da tabela -->
+                    <img class="fragment" src="matematico_neon.png" alt="Matemático Empírico" style="position: absolute; right: 100%; top: -2px; margin-top: 0; margin-right: 30px; height: 280px; border-radius: 15px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); border: 2px solid var(--cyan); z-index: -1; opacity: 0.85;">
+                    
+                    <table class="cyber-table" style="margin: 0; font-size: 0.8em;">
+                        <tr class="fragment">
+                            <th>BASE X (m)</th>
+                            <th>CÁLCULO L = X + 2000/X</th>
+                            <th>PERÍMETRO L (m)</th>
+                            <th>LADO Y (m) <span style="font-size: 0.8em; color: var(--white) !important; font-weight: normal; text-transform: none;">(y = 1000/x)</span></th>
+                        </tr>
+                        <tr class="fragment">
+                            <td>20</td><td>20 + 100</td><td>120</td><td>1000/20 = 50</td>
+                        </tr>
+                        <tr class="fragment" style="color: var(--magenta) !important; text-shadow: 0 0 5px var(--magenta);">
+                            <td style="color: var(--magenta) !important;">40</td>
+                            <td style="color: var(--magenta) !important;">40 + 50</td>
+                            <td style="color: var(--magenta) !important;">90</td>
+                            <td style="color: var(--magenta) !important;">1000/40 = 25</td>
+                        </tr>
+                        <tr class="fragment" style="color: var(--magenta) !important; text-shadow: 0 0 5px var(--magenta);">
+                            <td style="color: var(--magenta) !important;">50</td>
+                            <td style="color: var(--magenta) !important;">50 + 40</td>
+                            <td style="color: var(--magenta) !important;">90</td>
+                            <td style="color: var(--magenta) !important;">1000/50 = 20</td>
+                        </tr>
+                        <tr class="fragment">
+                            <td>70</td><td>70 + 28,6</td><td>98,6</td><td>1000/70 = 14,3</td>
+                        </tr>
+                        <tr class="fragment">
+                            <td>80</td><td>80 + 25</td><td>105</td><td>1000/80 = 12,5</td>
+                        </tr>
+                        <tr class="fragment" style="color: var(--cyan) !important; text-shadow: 0 0 5px var(--cyan); font-weight: bold;">
+                            <td style="color: var(--cyan) !important;">45</td>
+                            <td style="color: var(--cyan) !important;">45 + 44,4</td>
+                            <td style="color: var(--cyan) !important;">89,4</td>
+                            <td style="color: var(--cyan) !important;">1000/45 = 22,2</td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Anotação lateral para a última linha -->
+                    <div class="fragment" style="position: absolute; left: 100%; bottom: 6px; margin-left: 12px; display: flex; align-items: center; gap: 8px; color: var(--cyan); text-shadow: 0 0 5px var(--cyan);">
+                        <span style="font-size: 1.5em; font-family: sans-serif; font-weight: normal;">→</span>
+                        <div style="text-align: left; font-size: 0.7em; line-height: 1.3; white-space: nowrap;">
+                            Com boa intuição<br>
+                            <span style="color: #ffcc00; text-shadow: 0 0 5px #ffcc00; font-size: 1.1em;">⭐ Ideal</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="fragment" style="font-size: 0.75em; text-align: justify; margin-top: 15px; margin-left: 220px; line-height: 1.5; background: rgba(0,0,0,0.5); padding: 12px 15px; border-left: 3px solid var(--magenta);">
+                    Analisando a tabela, um matemático sem o uso de derivadas perceberia que o comprimento da cerca diminui até atingir um valor mínimo próximo do intervalo entre <span class="cyan" style="font-weight: bold; text-shadow: 0 0 5px var(--cyan);">$x = 40$</span> e <span class="cyan" style="font-weight: bold; text-shadow: 0 0 5px var(--cyan);">$x = 50$</span>, onde os resultados se repetem. Com base na simetria observada, estimaria intuitivamente que a medida ideal seria <span class="magenta" style="font-weight: bold; text-shadow: 0 0 5px var(--magenta);">$x \approx 45 \text{ m}$</span> e <span class="magenta" style="font-weight: bold; text-shadow: 0 0 5px var(--magenta);">$y \approx 22,2 \text{ m}$</span>.
+                </p>
+                
+            </section>
+
+            <!-- Slide 7: Gráfico Visual -->
+            <section>
+                <h2 class="title-cyan">ESTIMATIVA GRÁFICA MODERNA</h2>
+                
+                <div class="flex-center">
+                    <div class="hud-wrapper fragment" style="margin-bottom: 5px; padding: 10px; width: 740px; height: 420px; background: rgba(5, 5, 5, 0.6); box-sizing: border-box;">
+                        <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
+                        <svg viewBox="0 0 600 350" style="width: 100%; height: 100%; display: block; overflow: visible;">
+                            <defs>
+                                <filter id="neon-glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                                <filter id="neon-glow-magenta" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                                <marker id="arrow-cyan" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#00ffff" />
+                                </marker>
+                            </defs>
+                            
+                            <!-- Grid Lines (Horizontal) -->
+                            <line x1="60" y1="270" x2="560" y2="270" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="60" y1="240" x2="560" y2="240" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="60" y1="210" x2="560" y2="210" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="60" y1="180" x2="560" y2="180" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="60" y1="150" x2="560" y2="150" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="60" y1="120" x2="560" y2="120" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="60" y1="90" x2="560" y2="90" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="60" y1="60" x2="560" y2="60" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="60" y1="30" x2="560" y2="30" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            
+                            <!-- Grid Lines (Vertical) -->
+                            <line x1="122.5" y1="30" x2="122.5" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="185" y1="30" x2="185" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="247.5" y1="30" x2="247.5" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="310" y1="30" x2="310" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="372.5" y1="30" x2="372.5" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="435" y1="30" x2="435" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="497.5" y1="30" x2="497.5" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="560" y1="30" x2="560" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            
+                            <!-- Main Axes -->
+                            <line x1="60" y1="300" x2="60" y2="15" stroke="#00ffff" stroke-width="2.5" marker-end="url(#arrow-cyan)" />
+                            <line x1="60" y1="300" x2="580" y2="300" stroke="#00ffff" stroke-width="2.5" marker-end="url(#arrow-cyan)" />
+                            
+                            <!-- Tick Labels Y (L) -->
+                            <text x="50" y="304" fill="#ffffff" font-size="10" text-anchor="end">70</text>
+                            <text x="50" y="274" fill="#ffffff" font-size="10" text-anchor="end">80</text>
+                            <text x="50" y="244" fill="#ffffff" font-size="10" text-anchor="end">90</text>
+                            <text x="50" y="214" fill="#ffffff" font-size="10" text-anchor="end">100</text>
+                            <text x="50" y="184" fill="#ffffff" font-size="10" text-anchor="end">110</text>
+                            <text x="50" y="154" fill="#ffffff" font-size="10" text-anchor="end">120</text>
+                            <text x="50" y="124" fill="#ffffff" font-size="10" text-anchor="end">130</text>
+                            <text x="50" y="94" fill="#ffffff" font-size="10" text-anchor="end">140</text>
+                            <text x="50" y="64" fill="#ffffff" font-size="10" text-anchor="end">150</text>
+                            <text x="50" y="34" fill="#ffffff" font-size="10" text-anchor="end">160</text>
+                            
+                            <!-- Tick Labels X (x) -->
+                            <text x="60" y="315" fill="#ffffff" font-size="10" text-anchor="middle">10</text>
+                            <text x="122.5" y="315" fill="#ffffff" font-size="10" text-anchor="middle">20</text>
+                            <text x="185" y="315" fill="#ffffff" font-size="10" text-anchor="middle">30</text>
+                            <text x="247.5" y="315" fill="#ffffff" font-size="10" text-anchor="middle">40</text>
+                            <text x="310" y="315" fill="#ffffff" font-size="10" text-anchor="middle">50</text>
+                            <text x="372.5" y="315" fill="#ffffff" font-size="10" text-anchor="middle">60</text>
+                            <text x="435" y="315" fill="#ffffff" font-size="10" text-anchor="middle">70</text>
+                            <text x="497.5" y="315" fill="#ffffff" font-size="10" text-anchor="middle">80</text>
+                            <text x="560" y="315" fill="#ffffff" font-size="10" text-anchor="middle">90</text>
+                            
+                            <!-- Axes Labels -->
+                            <text x="70" y="45" fill="#00ffff" font-size="11" font-weight="bold">L(x) - Perímetro (m)</text>
+                            <text x="550" y="290" fill="#00ffff" font-size="11" font-weight="bold" text-anchor="end">x - Base (m)</text>
+                            
+                            <!-- Plot Curve L(x) = x + 2000/x -->
+                            <path d="M 85.0 39.4 L 97.5 87.0 L 110.0 122.7 L 122.5 150.0 L 135.0 171.3 L 147.5 188.0 L 160.0 201.2 L 172.5 211.7 L 185.0 220.0 L 197.5 226.5 L 210.0 231.5 L 222.5 235.3 L 235.0 238.1 L 247.5 240.0 L 260.0 241.1 L 272.5 241.6 L 277.0 241.7 L 285.0 241.6 L 297.5 241.0 L 310.0 240.0 L 322.5 238.6 L 335.0 236.9 L 347.5 234.9 L 360.0 232.6 L 372.5 230.0 L 397.5 224.2 L 422.5 217.8 L 447.5 210.7 L 472.5 203.0 L 497.5 195.0 L 522.5 186.6 L 547.5 177.8 L 560.0 173.3" fill="none" stroke="#00ffff" stroke-width="3" filter="url(#neon-glow-cyan)" />
+                            
+                            <!-- Point Dashed Lines (for x=45, y=90) -->
+                            <line x1="278.75" y1="240.0" x2="278.75" y2="300" stroke="#ff00ff" stroke-width="1.5" stroke-dasharray="4 4" />
+                            <line x1="60" y1="240.0" x2="278.75" y2="240.0" stroke="#ff00ff" stroke-width="1.5" stroke-dasharray="4 4" />
+                            
+                            <!-- Point Highlight Circle -->
+                            <circle cx="278.75" cy="240.0" r="6" fill="#ff00ff" stroke="#ffffff" stroke-width="2" filter="url(#neon-glow-magenta)" />
+                            
+                            <!-- Point Label -->
+                            <text x="278.75" y="222" fill="#ff00ff" font-size="12" font-weight="bold" text-anchor="middle" filter="url(#neon-glow-magenta)">x = 45, y = 90</text>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="flex-row fragment" style="margin-top: 10px; align-items: center;">
+                    <div class="box-cyan-left" style="margin:0; flex:1; font-size: 0.85em;">
+                        Plotando no <strong>GeoGebra</strong> a função <span class="cyan" style="font-weight: bold; text-shadow: 0 0 5px var(--cyan);">$L(x) = x + \frac{2000}{x}$</span>, visualizamos que o menor comprimento é <span class="cyan">L ≈ 89,4 m</span>, em <span class="cyan">x = 45 m</span>.
+                    </div>
+                    <div class="box-dashed-magenta" style="margin:0; flex:1; font-size: 0.85em;">
+                        <span class="white">Ambas as estimativas apontam <span class="cyan" style="font-weight: bold; text-shadow: 0 0 5px var(--cyan);">$x \approx 45 \text{ m}$</span>. Mas são apenas <span class="magenta">aproximações</span>.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7.1: Conclusões -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.5em !important; margin-bottom: 20px !important;">CONCLUSÕES DAS ESTIMATIVAS</h2>
+                
+                <div class="box-magenta-left fragment" style="margin-top: 30px; padding: 25px 30px; font-size: 0.95em; line-height: 1.7; text-align: justify;">
+                    <div style="margin-bottom: 20px;">
+                        <span style="font-size: 1.2em; color: var(--magenta); font-weight: bold; margin-right: 5px;">⇒</span> 
+                        <strong>Neste caso:</strong> Tanto a intuição analítica antiga quanto a visualização moderna nos levam à mesma estimativa de que o valor ideal para <span class="cyan" style="font-weight: bold; text-shadow: 0 0 5px var(--cyan);">$x$</span> está próximo a <span class="magenta" style="font-weight: bold; text-shadow: 0 0 5px var(--magenta);">45 metros</span>, com o <span class="cyan" style="font-weight: bold; text-shadow: 0 0 5px var(--cyan);">$y$</span> perto de <span class="magenta" style="font-weight: bold; text-shadow: 0 0 5px var(--magenta);">22 metros</span>.
+                    </div>
+                    <div>
+                        Contudo, ambas as formas são apenas <span style="text-decoration: underline; color: #ffcc00; text-shadow: 0 0 5px #ffcc00; font-weight: bold;">aproximações</span> que carecem de exatidão matemática rigorosa.
+                    </div>
+                </div>
+                
+                <!-- Caixa de Destaque -->
+                <div class="fragment flex-center" style="margin-top: 35px;">
+                    <div style="border: 2px solid var(--cyan); border-radius: 15px; padding: 20px 60px; background: rgba(0, 255, 255, 0.05); box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); display: flex; gap: 60px; align-items: center;">
+                        <div style="font-size: 1.6em; color: var(--cyan); font-weight: bold; text-shadow: 0 0 10px var(--cyan); font-family: monospace;">
+                            x ≈ 45 m
+                        </div>
+                        <div style="font-size: 1.2em; color: var(--white); opacity: 0.7;">
+                            e
+                        </div>
+                        <div style="font-size: 1.6em; color: var(--magenta); font-weight: bold; text-shadow: 0 0 10px var(--magenta); font-family: monospace;">
+                            y ≈ 22 m
+                        </div>
+                    </div>
+                </div>
+                
+            </section>
+
+            <!-- Slide 7.2: Importância da Derivada -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.5em !important; margin-bottom: 20px !important;">A IMPORTÂNCIA DA DERIVADA</h2>
+                
+                <div class="box-cyan-left fragment" style="margin-top: 30px; padding: 25px 30px; font-size: 0.9em; line-height: 1.7; text-align: justify;">
+                    <div style="margin-bottom: 15px;">
+                        No mundo real, estimativas aproximadas não são suficientes. De acordo com o nosso problema, nenhuma empresa gostaria de gastar mais do que o estritamente necessário para a compra de materiais.
+                    </div>
+                    <div>
+                        É aqui que a <span class="cyan" style="font-size: 1.15em; font-weight: bold; text-shadow: 0 0 5px var(--cyan);">Derivada</span> se revela uma ferramenta matemática fundamental: ela nos tira do campo das incertezas empíricas e nos fornece com <span class="magenta" style="font-weight: bold; text-shadow: 0 0 5px var(--magenta);">exatidão matemática</span> os valores precisos que otimizam o projeto e minimizam o custo do material (neste caso, a cerca).
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8: Calculo Derivada 1 -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.1em !important; margin-bottom: 15px !important; text-align: left; text-transform: none;">⇒ 1º Passo <span style="font-size: 0.8em; color: var(--magenta) !important;">(Preparando a função e reescrevendo)</span></h2>
+                
+                <div class="flex-row" style="align-items: center; gap: 30px;">
+                    <div class="flex-col" style="flex: 1.1;">
+                        <div class="box-cyan-left fragment" style="margin: 0 0 15px 0; padding-top: 5px; padding-bottom: 5px;">
+                            <span class="box-title" style="font-size: 0.8em; margin-bottom: 3px;">MANIPULAÇÃO ALGÉBRICA</span>
+                            <div style="font-size: 0.75em; line-height: 1.4;">Para derivarmos com facilidade usando a regra da potência, aplicamos a seguinte <span style="color: #00ff00; text-shadow: 0 0 5px #00ff00; font-weight: bold;">propriedade de expoente negativo</span>:</div>
+                        </div>
+                        
+                        <div class="formula-box fragment" style="padding: 5px 20px; margin: 0 auto; display: block; width: fit-content;">
+                            <div class="katex" style="font-size: 1.1em !important;">$$\frac{1}{x^n} = x^{-n}$$</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-col" style="flex: 1.1; text-align: center;">
+                        <p class="fragment" style="font-size: 0.8em; margin: 0 0 10px 0; text-align: left;">Transformamos a função original:</p>
+                        <div class="formula-box fragment" style="border-color: var(--cyan); padding: 5px 20px; margin: 0 auto 5px auto; display: block; width: fit-content;">
+                            <div class="katex" style="font-size: 1.1em !important; color: var(--cyan) !important; text-shadow: 0 0 5px var(--cyan);">$$L(x) = x + \frac{2000}{x}$$</div>
+                        </div>
+                        <div class="cyan arrow fragment" style="margin: 2px 0; font-size: 0.8em; display: block;">↓</div>
+                        <div class="formula-box fragment" style="border-color: var(--cyan); padding: 5px 20px; margin: 5px auto 0 auto; display: block; width: fit-content;">
+                            <div class="katex" style="font-size: 1.1em !important; color: var(--cyan) !important; text-shadow: 0 0 5px var(--cyan);">$$L(x) = x + 2000x^{-1}$$</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Slide 8.5: Calculo Derivada Parte 2 -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.1em !important; margin-bottom: 15px !important; text-align: left; text-transform: none;">⇒ 2º Passo <span style="font-size: 0.8em; color: var(--magenta) !important;">(Cálculo da derivada: Aplicação)</span></h2>
+                
+                <div class="flex-row" style="align-items: center; gap: 30px;">
+                    <div class="flex-col" style="flex: 1;">
+                        <div class="box-dashed-magenta fragment" style="margin: 0; padding: 15px; font-size: 0.85em;">
+                            <span class="magenta" style="font-weight: bold; display: block; margin-bottom: 8px;">REGRA DA POTÊNCIA</span>
+                            $$f(x) = x^n \rightarrow f'(x) = n \cdot x^{n-1}$$
+                        </div>
+                        <p class="fragment" style="font-size: 0.85em; line-height: 1.5; margin-top: 15px;">
+                            Aplicamos a regra acima para derivar cada termo da função perímetro <span class="cyan" style="font-weight: bold; text-shadow: 0 0 5px var(--cyan);">$L(x) = x + 2000x^{-1}$</span>.
+                        </p>
+                    </div>
+                    
+                    <div class="flex-col" style="flex: 1.2; text-align: center;">
+                        
+                        <div class="formula-box fragment" style="border-color: #00ff00; box-shadow: 0 0 10px rgba(0,255,0,0.4); padding: 5px 20px; margin: 0 auto 5px auto; display: block; width: fit-content;">
+                            <span class="box-title" style="color: #00ff00 !important; margin-bottom: 3px; font-size: 0.7em;">FUNÇÃO PREPARADA</span>
+                            <div class="katex" style="color: #00ff00 !important; text-shadow: 0 0 10px #00ff00; font-size: 1.1em !important;">$$L(x) = x + 2000x^{-1}$$</div>
+                        </div>
+                        
+                        <div class="arrow fragment" style="margin: 2px 0; font-size: 0.8em; display: block;">↓</div>
+
+                        <div class="formula-box fragment" style="padding: 5px 20px; margin: 5px auto 5px auto; display: block; width: fit-content;">
+                            <span class="box-title" style="font-size: 0.7em; margin-bottom: 3px;">DERIVANDO OS TERMOS</span>
+                            <div class="katex" style="font-size: 1.1em !important;">$$L'(x) = 1\cdot x^0 + (-1)\cdot 2000x^{-2}$$</div>
+                        </div>
+                        
+                        <div class="arrow fragment" style="margin: 2px 0; font-size: 0.8em; display: block;">↓</div>
+                        
+                        <div class="formula-box fragment" style="border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,255,255,0.4); padding: 5px 20px; margin: 5px auto 0 auto; display: block; width: fit-content;">
+                            <span class="box-title" style="color:var(--cyan) !important; margin-bottom: 3px; font-size: 0.7em;">DERIVADA RESULTANTE</span>
+                            <div class="katex" style="color: var(--cyan) !important; text-shadow: 0 0 10px var(--cyan); font-size: 1.1em !important;">$$L'(x) = 1 - \frac{2000}{x^2}$$</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9: Calculo Derivada Ponto Crítico -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.1em !important; margin-bottom: 5px !important; text-align: left; text-transform: none;">⇒ 3º Passo <span style="font-size: 0.8em; color: var(--magenta) !important;">(Cálculo da derivada: Ponto Crítico)</span></h2>
+                
+                <div class="box-cyan-left fragment" style="margin: 0 auto 10px auto; padding: 5px 20px; width: 85%; text-align: left;">
+                    <span class="box-title" style="font-size: 0.65em; margin-bottom: 2px;">TEOREMA DE FERMAT</span>
+                    <div style="font-size: 0.65em; line-height: 1.4;">
+                        ⇒ Pelo teorema de Fermat temos que: Os extremos locais de uma função ocorrem em seus pontos críticos onde a primeira derivada é igual a <span style="color: #ff4444; font-weight: bold;">zero</span> <span class="magenta" style="font-weight: bold;">$(L'(x) = 0)$</span>.
+                    </div>
+                </div>
+
+                <div class="box-dashed-magenta fragment" style="margin: 0 auto 10px auto; padding: 10px 20px; width: 85%; font-size: 0.6em;">
+                    <div class="flex-row" style="align-items: stretch; justify-content: center;">
+                        
+                        <!-- Coluna 1 -->
+                        <div class="flex-col" style="align-items: center; text-align: center; flex: 1; padding: 10px 0;">
+                            <div class="katex">$$0 = 1 - \frac{2000}{x^2}$$</div>
+                            <div style="color: var(--magenta); font-size: 1em; margin: 3px 0;">↓</div>
+                            <div class="katex">$$-1 = - \frac{2000}{x^2}$$</div>
+                            <div style="color: var(--magenta); font-size: 1em; margin: 3px 0;">↓</div>
+                            <div class="katex">$$-1 \cdot (-1) = \frac{-2000}{x^2} \cdot (-1)$$</div>
+                        </div>
+
+                        <!-- Conector central dinâmico SVG -->
+                        <div style="width: 60px; position: relative;">
+                            <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; overflow: visible;">
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+                                        <polygon points="0 0, 6 2, 0 4" fill="var(--cyan)" />
+                                    </marker>
+                                </defs>
+                                <path d="M 0 85 L 50 85 L 50 12 L 95 12" fill="none" stroke="var(--cyan)" stroke-width="2" vector-effect="non-scaling-stroke" marker-end="url(#arrowhead)" style="filter: drop-shadow(0 0 3px var(--cyan));" />
+                            </svg>
+                        </div>
+                        
+                        <!-- Coluna 2 -->
+                        <div class="flex-col" style="align-items: center; text-align: center; flex: 1; padding: 10px 0;">
+                            <div class="katex">$$1 \cdot (x^2) = 2000$$</div>
+                            <div style="color: var(--magenta); font-size: 1em; margin: 3px 0;">↓</div>
+                            <div class="katex">$$x^2 = 2000$$</div>
+                            <div style="color: var(--magenta); font-size: 1em; margin: 3px 0;">↓</div>
+                            <div class="katex">$$x = \pm\sqrt{2000}$$</div>
+                            <div style="color: var(--magenta); font-size: 1em; margin: 3px 0;">↓</div>
+                            <div class="katex" style="color: var(--white) !important;">$$x \approx \pm 44,72 \text{ m}$$</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex-row fragment" style="align-items: center; justify-content: center; gap: 20px;">
+                    <div class="formula-box" style="border-color: var(--cyan); padding: 5px 15px; margin: 0; background: rgba(0,255,255,0.05);">
+                        <span class="box-title" style="color:var(--cyan) !important; font-size: 0.6em; margin-bottom: 2px;">VALOR OTIMIZADO DE X</span>
+                        <div class="katex" style="color: var(--cyan) !important; text-shadow: 0 0 10px var(--cyan); font-size: 1em !important;">$$x \approx 44,72 \text{ m}$$</div>
+                    </div>
+                    <div style="font-size: 0.6em; color: var(--magenta) !important; max-width: 300px; text-align: left; line-height: 1.2;">
+                        <strong>[!]</strong> Descartamos o valor negativo por se tratar de dimensão física.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 10: Calculando Y -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.1em !important; margin-bottom: 5px !important; text-align: left; text-transform: none;">⇒ 4º Passo <span style="font-size: 0.8em; color: var(--magenta) !important;">(Calculando a dimensão adjacente $y$)</span></h2>
+                
+                <div class="box-cyan-left fragment" style="margin: 0 auto 10px auto; padding: 5px 15px; width: 95%; text-align: left; background: rgba(0, 255, 255, 0.05);">
+                    <div style="font-size: 0.65em; line-height: 1.3;">
+                        <span style="font-weight: bold; color: var(--white) !important;">Teoria:</span> A relação matemática do retângulo define que a área é o produto de suas dimensões <span class="magenta" style="font-weight: bold;">$(x \cdot y)$</span>. Sabendo que a área é um valor fixo <span class="magenta" style="font-weight: bold;">$(A = 1000 \text{ m}^2)$</span> podemos isolar a variável <span class="magenta" style="font-weight: bold;">$y$</span> para encontrar o seu valor, através da relação:
+                    </div>
+                </div>
+
+                <div class="fragment" style="text-align: center; margin-bottom: 15px;">
+                    <div class="formula-box" style="border-color: #ff4444; background: rgba(255,0,0,0.1); padding: 5px 15px; display: inline-block; box-shadow: 0 0 10px rgba(255,0,0,0.3); border-radius: 5px; margin-bottom: 5px;">
+                        <div class="katex" style="font-size: 0.9em !important; color: #ff4444 !important; text-shadow: 0 0 5px #ff4444;">$$1000 = x \cdot y$$</div>
+                    </div>
+                    <div class="katex" style="font-size: 0.9em !important; display: block;">$$y = \frac{1000}{x}$$</div>
+                </div>
+                
+                <div class="fragment" style="text-align: left; width: 90%; margin: 0 auto 5px auto; font-size: 0.65em;">
+                    ⇒ Substituindo o ponto crítico de mínimo: <span class="magenta" style="font-weight:bold;">$x \approx 44,72$</span> temos:
+                </div>
+
+                <div class="fragment" style="text-align: center;">
+                    <div class="formula-box" style="border-color: var(--yellow); background: rgba(255,255,0,0.05); padding: 5px 20px; display: inline-block; box-shadow: 0 0 10px rgba(255,255,0,0.3); border-radius: 5px;">
+                        <div class="katex" style="font-size: 1em !important; color: var(--yellow) !important; text-shadow: 0 0 5px var(--yellow);">$$y = \frac{1000}{44,72} \quad \Rightarrow \quad y \approx 22,36 \text{ m}$$</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 11: Segunda Derivada -->
+            <!-- Slide 11: Segunda Derivada -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.1em !important; margin-bottom: 10px !important; text-align: left; text-transform: none;">⇒ 5º Passo <span style="font-size: 0.8em; color: var(--magenta) !important;">(Teste da Segunda Derivada)</span></h2>
+                
+
+                
+                <div class="flex-col" style="align-items: flex-start; text-align: left; margin-top: 10px; font-size: 0.85em; width: 100%;">
+                    
+                    <div class="fragment" style="margin-bottom: 20px; line-height: 1.5;">
+                        <span class="magenta" style="font-weight:bold; margin-right: 10px;">⇒</span>
+                        Derivando novamente a função a partir de: <span class="cyan" style="font-weight: bold; text-shadow: 0 0 5px var(--cyan);">$L'(x) = 1 - 2000x^{-2}$</span>, derivando por partes:
+                    </div>
+
+                    <div class="fragment" style="margin-bottom: 10px;">
+                        <span class="magenta" style="font-weight:bold; margin-right: 10px;">⇒</span>
+                        Derivada da constante:
+                    </div>
+                    
+                    <div class="formula-box fragment" style="padding: 10px 30px; margin: 0 auto 20px auto; display: block; width: fit-content; border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,255,255,0.4);">
+                        <div class="katex" style="font-size: 1.2em !important; color: var(--magenta) !important; text-shadow: 0 0 10px var(--magenta);">$$L'(1) = 0$$</div>
+                    </div>
+
+                    <div class="fragment" style="margin-bottom: 10px;">
+                        <span class="magenta" style="font-weight:bold; margin-right: 10px;">⇒</span>
+                        Derivada aplicando a regra da potência:
+                    </div>
+
+                    <div class="box-dashed-magenta fragment" style="margin: 0 auto 15px auto; padding: 5px 20px; font-size: 0.75em; display: table;">
+                        <span class="magenta" style="font-weight: bold; display: block; margin-bottom: 5px; text-align: center;">REGRA DA POTÊNCIA</span>
+                        <div class="katex" style="font-size: 1.1em !important;">$$f(x) = x^n \rightarrow f'(x) = n \cdot x^{n-1}$$</div>
+                    </div>
+
+                    <div class="formula-box fragment" style="padding: 15px 30px; margin: 0 auto; display: block; width: fit-content; border-color: var(--magenta); box-shadow: 0 0 10px rgba(255,0,255,0.4);">
+                        <div class="katex" style="font-size: 1.1em !important; color: var(--magenta) !important; text-shadow: 0 0 10px var(--magenta);">$$L'(-2000x^{-2}) \Rightarrow -2 \cdot (-2000x^{-2-1}) \Rightarrow 4000x^{-3} \Rightarrow \frac{4000}{x^3}$$</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 12: Segunda Derivada (Cont.) -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.5em !important; margin-bottom: 30px !important;">TESTE DA SEGUNDA DERIVADA (CONT.)</h2>
+                
+                <div class="flex-col" style="align-items: center; justify-content: center; height: 50vh; width: 100%;">
+                    
+                    <div class="fragment" style="margin-bottom: 40px; font-size: 1.1em;">
+                        <span class="magenta" style="font-weight:bold; margin-right: 10px;">⇒</span>
+                        Substituindo temos que:
+                    </div>
+
+                    <div class="fragment" style="display: flex; justify-content: center; align-items: center; gap: 20px; width: 100%;">
+                        <div class="katex" style="font-size: 1.3em !important;">$$L''(x) = 0 + \frac{4000}{x^3} \quad \Rightarrow$$</div>
+                        <div class="formula-box" style="padding: 15px 30px; margin: 0; display: inline-block; border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,255,255,0.4);">
+                            <div class="katex" style="font-size: 1.4em !important; color: var(--cyan) !important; text-shadow: 0 0 10px var(--cyan);">$$L''(x) = \frac{4000}{x^3}$$</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 13: Conclusao -->
+            <!-- Slide 13: Conclusao -->
+            <!-- Slide 13: Conclusao -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.1em !important; margin-bottom: 15px !important; text-align: left; text-transform: none;">⇒ 6º Passo <span style="font-size: 0.8em; color: var(--magenta) !important;">(Verificação do Mínimo Absoluto)</span></h2>
+                
+                <div class="flex-col" style="align-items: flex-start; text-align: left; margin-top: 10px; font-size: 0.8em; width: 100%;">
+                    
+                    <div class="fragment" style="margin-bottom: 20px; line-height: 1.5;">
+                        <span class="magenta" style="font-weight:bold; margin-right: 10px;">⇒</span>
+                        Aplicando o ponto crítico encontrado (<span style="color: #ff4444; font-weight:bold;">$x \approx 44,72$</span>), que por sua vez valida a condição de teste da segunda derivada (<span style="color: #ff4444; font-weight:bold;">$f'' > 0$</span>):
+                    </div>
+
+                    <div class="formula-box fragment" style="padding: 10px 30px; margin: 0 auto 20px auto; display: block; width: fit-content; border-color: var(--magenta); box-shadow: 0 0 10px rgba(255,0,255,0.4);">
+                        <div class="katex" style="font-size: 1.2em !important; color: var(--magenta) !important; text-shadow: 0 0 10px var(--magenta);">$$L''(44,72) = \frac{4000}{(44,72)^3} \approx 0,0447$$</div>
+                    </div>
+
+                    <div class="fragment" style="margin-bottom: 15px;">
+                        Desta forma provamos o teste da segunda derivada:
+                    </div>
+
+                    <div class="formula-box fragment" style="padding: 10px 25px; margin: 0 auto 20px auto; display: block; width: fit-content; border-color: #ff4444; background: rgba(255, 68, 68, 0.1); box-shadow: 0 0 10px rgba(255,68,68,0.3);">
+                        <div class="katex" style="font-size: 1.1em !important; color: #ff4444 !important; font-weight: bold; text-shadow: 0 0 5px rgba(255,68,68,0.5);">$$f'' > 0\text{, pois } 0,0447 > 0$$</div>
+                    </div>
+
+                    <div class="box-dashed-cyan fragment" style="width: 100%; text-align: center; margin: 0 auto; padding: 20px 15px; border-color: #ff4444; background: rgba(255, 68, 68, 0.05); border-style: solid; border-width: 1px;">
+                        <span style="font-size: 1.25em; display: block; line-height: 1.5;">Confirmando matematicamente que a concavidade da curva do gráfico será voltada para cima e que o ponto mínimo absoluto será <strong style="color: #ff4444;">44,72</strong>.</span>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Slide 14: Conclusão Matemática -->
+            <!-- Slide 14: Conclusão Matemática -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.1em !important; margin-bottom: 15px !important; text-align: left; text-transform: none;">⇒ 7º Passo <span style="font-size: 0.8em; color: var(--magenta) !important;">(Conclusão Matemática)</span></h2>
+                
+                <div class="fragment" style="text-align: left; margin-bottom: 15px; font-size: 0.9em;">
+                    <span style="color: #ff4444; font-weight:bold; margin-right: 10px;">⇒</span> Conclusão matemática:
+                </div>
+
+                <div class="flex-row" style="align-items: center; gap: 30px;">
+                    <div class="flex-col" style="flex: 1.2;">
+                        <div class="box-dashed-cyan fragment" style="margin: 0; padding: 25px; font-size: 0.85em; text-align: justify; line-height: 1.7; border-color: #ff4444; background: rgba(255, 68, 68, 0.05); border-width: 2px; border-style: solid; box-shadow: 0 0 15px rgba(255,68,68,0.2);">
+                            <span class="fragment">"A conclusão matemática final é que a função do comprimento <strong style="color: #39ff14; text-shadow: 0 0 8px rgba(57, 255, 20, 0.6); font-size: 1.05em;">$L(x) = x + \frac{2000}{x}$</strong> atinge o seu mínimo absoluto sob as condições <strong style="color: #39ff14; text-shadow: 0 0 8px rgba(57, 255, 20, 0.6); font-size: 1.05em;">$L'(x) = 0$</strong> e <strong style="color: #39ff14; text-shadow: 0 0 8px rgba(57, 255, 20, 0.6); font-size: 1.05em;">$L''(x) > 0$</strong>.</span> 
+                            <br><br>
+                            <span class="fragment">Isso ocorre exatamente em raiz de <strong style="color:#ff4444;">2000</strong>, definindo assim a dimensão principal da cerca em aproximadamente <strong style="color:#ff4444;">44,72 m</strong>.</span> 
+                            <br><br>
+                            <span class="fragment">Consequentemente, pela restrição geométrica da área o lado adjacente <strong style="color: #39ff14; text-shadow: 0 0 8px rgba(57, 255, 20, 0.6); font-size: 1.05em;">$y = \frac{1000}{x}$</strong> resulta na medida ideal de aproximadamente <strong style="color:#ff4444;">22,36 m</strong>."</span>
+                        </div>
+                    </div>
+
+                    <div class="flex-col fragment" style="flex: 1;">
+                        <div class="animation-container" style="display: flex; justify-content: center; background: #0a0a0a; border: 1px solid var(--cyan); border-radius: 8px; padding: 10px; box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);">
+                            <svg width="100%" height="100%" viewBox="0 0 400 300" style="max-height: 350px;">
+                                <!-- HUD Corners -->
+                                <path d="M 15,35 L 15,15 L 35,15" fill="none" stroke="var(--cyan)" stroke-width="2" />
+                                <path d="M 385,35 L 385,15 L 365,15" fill="none" stroke="var(--cyan)" stroke-width="2" />
+                                <path d="M 15,265 L 15,285 L 35,285" fill="none" stroke="var(--cyan)" stroke-width="2" />
+                                <path d="M 385,265 L 385,285 L 365,285" fill="none" stroke="var(--cyan)" stroke-width="2" />
+
+                                <!-- Grid -->
+                                <g stroke="#222" stroke-width="1" stroke-dasharray="2,2">
+                                    <line x1="98" y1="40" x2="98" y2="260" />
+                                    <line x1="156" y1="40" x2="156" y2="260" />
+                                    <line x1="214" y1="40" x2="214" y2="260" />
+                                    <line x1="272" y1="40" x2="272" y2="260" />
+                                    <line x1="330" y1="40" x2="330" y2="260" />
+                                    <line x1="40" y1="54" x2="350" y2="54" />
+                                    <line x1="40" y1="81" x2="350" y2="81" />
+                                    <line x1="40" y1="109" x2="350" y2="109" />
+                                    <line x1="40" y1="136" x2="350" y2="136" />
+                                    <line x1="40" y1="164" x2="350" y2="164" />
+                                    <line x1="40" y1="191" x2="350" y2="191" />
+                                    <line x1="40" y1="219" x2="350" y2="219" />
+                                    <line x1="40" y1="246" x2="350" y2="246" />
+                                </g>
+
+                                <!-- Axes -->
+                                <line x1="40" y1="260" x2="370" y2="260" stroke="var(--cyan)" stroke-width="2" />
+                                <line x1="40" y1="40" x2="40" y2="260" stroke="var(--cyan)" stroke-width="2" />
+
+                                <!-- Tick Labels -->
+                                <g fill="#ccc" font-size="10" font-family="monospace">
+                                    <text x="35" y="249" text-anchor="end">80</text>
+                                    <text x="35" y="222" text-anchor="end">100</text>
+                                    <text x="35" y="194" text-anchor="end">120</text>
+                                    <text x="35" y="167" text-anchor="end">140</text>
+                                    <text x="35" y="139" text-anchor="end">160</text>
+                                    <text x="35" y="112" text-anchor="end">180</text>
+                                    <text x="35" y="84" text-anchor="end">200</text>
+                                    <text x="35" y="57" text-anchor="end">220</text>
+                                    <text x="98" y="275" text-anchor="middle">20</text>
+                                    <text x="156" y="275" text-anchor="middle">40</text>
+                                    <text x="214" y="275" text-anchor="middle">60</text>
+                                    <text x="272" y="275" text-anchor="middle">80</text>
+                                    <text x="330" y="275" text-anchor="middle">100</text>
+                                </g>
+
+                                <!-- Axis Titles -->
+                                <text x="45" y="50" fill="var(--cyan)" font-size="10" font-family="monospace" font-weight="bold">L(x) - Perímetro (m)</text>
+                                <text x="360" y="250" fill="var(--cyan)" font-size="10" font-family="monospace" font-weight="bold" text-anchor="end">x - Base (m)</text>
+
+                                <!-- Limite da Sede x=100 -->
+                                <line x1="330" y1="40" x2="330" y2="260" stroke="#fff" stroke-width="1.5" stroke-dasharray="4,4" />
+                                <text x="325" y="55" fill="#fff" font-size="9" font-family="monospace" text-anchor="end">Limite da Sede (x=100)</text>
+
+                                <!-- Curve L(x) = x + 2000/x -->
+                                <path id="curve" d="M 69,67.5 L 76.25,119 L 83.5,152.3 L 90.75,175 L 98,191.25 L 112.5,211.9 L 127,223.4 L 141.5,229.6 L 156,232.5 L 169.7,233.27 L 185,232.5 L 214,228 L 243,220.8 L 272,211.9 L 301,202 L 330,191.25" fill="none" stroke="var(--cyan)" stroke-width="3.5" style="filter: drop-shadow(0 0 5px var(--cyan));" />
+                                
+                                <!-- Lines to Minimum -->
+                                <line x1="40" y1="233.27" x2="169.7" y2="233.27" stroke="var(--magenta)" stroke-width="1.5" stroke-dasharray="3,3" />
+                                <line x1="169.7" y1="233.27" x2="169.7" y2="260" stroke="var(--magenta)" stroke-width="1.5" stroke-dasharray="3,3" />
+                                
+                                <!-- Mínimo Label -->
+                                <text x="169.7" y="215" fill="var(--magenta)" font-size="11" font-family="monospace" font-weight="bold" text-anchor="middle">Mínimo: (44.72, 89.44)</text>
+
+                                <!-- Static Min Point -->
+                                <circle cx="169.7" cy="233.27" r="5" fill="#fff" stroke="var(--magenta)" stroke-width="2" style="filter: drop-shadow(0 0 5px var(--magenta));" />
+
+                                <!-- Animated Point Deslizando -->
+                                <g>
+                                    <circle cx="0" cy="0" r="4" fill="var(--cyan)">
+                                        <animate attributeName="r" values="3;6;3" dur="0.8s" repeatCount="indefinite" />
+                                    </circle>
+                                    <animateMotion dur="5s" repeatCount="indefinite" path="M 69,67.5 L 76.25,119 L 83.5,152.3 L 90.75,175 L 98,191.25 L 112.5,211.9 L 127,223.4 L 141.5,229.6 L 156,232.5 L 169.7,233.27 L 185,232.5 L 214,228 L 243,220.8 L 272,211.9 L 301,202 L 330,191.25" keyPoints="0; 0.565; 0.565; 1" keyTimes="0; 0.4; 0.8; 1" calcMode="linear" />
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 15: Dimensões Finais -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.5em !important; margin-bottom: 40px !important;">DIMENSÕES FINAIS OTIMIZADAS</h2>
+                
+                <div class="flex-row" style="align-items: center; justify-content: space-between; width: 100%; gap: 50px; margin-top: 20px;">
+                    
+                    <div class="flex-col" style="flex: 1; text-align: center;">
+                        <div class="formula-box fragment" style="border-color: var(--cyan); width: 100%; margin-bottom: 20px;">
+                            <span class="box-title" style="color: var(--cyan) !important;">RESULTADO: BASE X</span>
+                            <div class="katex" style="color: var(--cyan) !important;">$$x \approx 44,72 \text{ m}$$</div>
+                        </div>
+                        <div class="formula-box fragment" style="border-color: var(--magenta); width: 100%;">
+                            <span class="box-title" style="color: var(--magenta) !important;">RESULTADO: LATERAL Y</span>
+                            <div class="katex" style="color: var(--magenta) !important;">$$y \approx 22,36 \text{ m}$$</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-col fragment" style="flex: 1.5; text-align: center;">
+                        <div class="hud-wrapper" style="display: inline-block; width: 550px; height: 350px; background: #0a0a0a; position: relative;">
+                            <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
+                            
+                            <style>
+                                @keyframes morphFence {
+                                    0%   { width: 450px; height: 55.5px; border-color: #ffcc00; background-color: rgba(255, 204, 0, 0.15); box-shadow: none; }
+                                    15%  { width: 130px; height: 192.3px; border-color: #ffcc00; background-color: rgba(255, 204, 0, 0.15); box-shadow: none; }
+                                    30%  { width: 223.6px; height: 111.8px; border-color: #39ff14; background-color: rgba(57, 255, 20, 0.3); box-shadow: 0 0 35px rgba(57, 255, 20, 0.5); }
+                                    80%  { width: 223.6px; height: 111.8px; border-color: #39ff14; background-color: rgba(57, 255, 20, 0.3); box-shadow: 0 0 35px rgba(57, 255, 20, 0.5); }
+                                    100% { width: 450px; height: 55.5px; border-color: #ffcc00; background-color: rgba(255, 204, 0, 0.15); box-shadow: none; }
+                                }
+                                @keyframes revealLabelY {
+                                    0%, 25% { opacity: 0; transform: translateY(-50%) scale(0.8); }
+                                    30%, 80% { opacity: 1; transform: translateY(-50%) scale(1); }
+                                    85%, 100% { opacity: 0; transform: translateY(-50%) scale(0.8); }
+                                }
+                                @keyframes revealLabelX {
+                                    0%, 25% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+                                    30%, 80% { opacity: 1; transform: translateX(-50%) scale(1); }
+                                    85%, 100% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+                                }
+                                @keyframes revealLabelCenter {
+                                    0%, 25% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+                                    30%, 80% { opacity: 1; transform: translateX(-50%) scale(1); }
+                                    85%, 100% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+                                }
+                            </style>
+
+                            <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 25px;">
+                                <!-- Sede da Empresa -->
+                                <div style="width: 480px; height: 50px; background: #6495ED; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 0.95em; color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; z-index: 2; text-align: center; line-height: 1.2; box-sizing: border-box; padding: 5px;">
+                                    SEDE DA EMPRESA (100 metros)
+                                </div>
+                                
+                                <!-- Cercado Animado -->
+                                <div style="border: 3px dashed #ffcc00; border-top: none; position: relative; z-index: 1; animation: morphFence 10s infinite ease-in-out; display: flex; align-items: center; justify-content: center;">
+                                    
+                                    <div style="font-weight: bold; text-shadow: 1px 1px 3px #000; color: #fff; text-align: center; line-height: 1.2; font-size: 0.9em; position: relative;">
+                                        ÁREA CERCADA<br>1000 m²
+                                    </div>
+                                    
+                                    <!-- Medidas Otimizadas (Surgem no momento certo) -->
+                                    <div style="position: absolute; right: 100%; margin-right: 15px; top: 50%; color: var(--magenta); font-weight: bold; font-size: 1.1em; white-space: nowrap; text-shadow: 0 0 5px var(--magenta); animation: revealLabelY 10s infinite ease-in-out;">y = 22,36 m</div>
+                                    <div style="position: absolute; left: 100%; margin-left: 15px; top: 50%; color: var(--magenta); font-weight: bold; font-size: 1.1em; white-space: nowrap; text-shadow: 0 0 5px var(--magenta); animation: revealLabelY 10s infinite ease-in-out;">y = 22,36 m</div>
+                                    <div style="position: absolute; bottom: -50px; left: 50%; color: var(--cyan); font-weight: bold; font-size: 1.3em; white-space: nowrap; text-shadow: 0 0 5px var(--cyan); animation: revealLabelX 10s infinite ease-in-out;">x = 44,72 m</div>
+                                    <div style="position: absolute; bottom: -80px; left: 50%; color: #39ff14; font-weight: bold; font-size: 1.1em; white-space: nowrap; text-shadow: 0 0 5px #39ff14; animation: revealLabelCenter 10s infinite ease-in-out;">★ MEDIDAS IDEAIS ★</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </section>
+
+            <!-- Slide 14: Gráfico Final -->
+            <section>
+                <h2 class="title-cyan" style="font-size: 1.5em !important; margin-bottom: 10px !important;">REPRESENTAÇÃO GRÁFICA EXATA</h2>
+                
+                <div class="flex-center">
+                    <div class="hud-wrapper fragment" style="margin-bottom: 5px; padding: 10px; width: 740px; height: 440px; background: rgba(5, 5, 5, 0.6); box-sizing: border-box;">
+                        <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
+                        <svg viewBox="0 0 600 350" style="width: 100%; height: 100%; display: block; overflow: visible;">
+                            <defs>
+                                <filter id="neon-glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                                <filter id="neon-glow-magenta" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                                <marker id="arrow-cyan" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#00ffff" />
+                                </marker>
+                            </defs>
+                            
+                            <!-- Domínio de interesse -->
+                            <rect x="40" y="20" width="500" height="280" fill="rgba(255, 255, 255, 0.05)" />
+                            
+                            <!-- Grid Lines (Horizontal) -->
+                            <line x1="40" y1="260" x2="580" y2="260" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="40" y1="220" x2="580" y2="220" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="40" y1="180" x2="580" y2="180" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="40" y1="140" x2="580" y2="140" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="40" y1="100" x2="580" y2="100" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="40" y1="60" x2="580" y2="60" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="40" y1="20" x2="580" y2="20" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            
+                            <!-- Grid Lines (Vertical) -->
+                            <line x1="140" y1="20" x2="140" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="240" y1="20" x2="240" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="340" y1="20" x2="340" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="440" y1="20" x2="440" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            <line x1="540" y1="20" x2="540" y2="300" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="3 3" />
+                            
+                            <!-- Main Axes -->
+                            <line x1="40" y1="300" x2="40" y2="10" stroke="#00ffff" stroke-width="2.5" marker-end="url(#arrow-cyan)" />
+                            <line x1="40" y1="300" x2="590" y2="300" stroke="#00ffff" stroke-width="2.5" marker-end="url(#arrow-cyan)" />
+                            
+                            <!-- Tick Labels Y (L) -->
+                            <text x="30" y="304" fill="#ffffff" font-size="10" text-anchor="end">80</text>
+                            <text x="30" y="264" fill="#ffffff" font-size="10" text-anchor="end">100</text>
+                            <text x="30" y="224" fill="#ffffff" font-size="10" text-anchor="end">120</text>
+                            <text x="30" y="184" fill="#ffffff" font-size="10" text-anchor="end">140</text>
+                            <text x="30" y="144" fill="#ffffff" font-size="10" text-anchor="end">160</text>
+                            <text x="30" y="104" fill="#ffffff" font-size="10" text-anchor="end">180</text>
+                            <text x="30" y="64" fill="#ffffff" font-size="10" text-anchor="end">200</text>
+                            <text x="30" y="24" fill="#ffffff" font-size="10" text-anchor="end">220</text>
+                            
+                            <!-- Tick Labels X (x) -->
+                            <text x="140" y="315" fill="#ffffff" font-size="10" text-anchor="middle">20</text>
+                            <text x="240" y="315" fill="#ffffff" font-size="10" text-anchor="middle">40</text>
+                            <text x="340" y="315" fill="#ffffff" font-size="10" text-anchor="middle">60</text>
+                            <text x="440" y="315" fill="#ffffff" font-size="10" text-anchor="middle">80</text>
+                            <text x="540" y="315" fill="#ffffff" font-size="10" text-anchor="middle">100</text>
+                            
+                            <!-- Axes Labels -->
+                            <text x="50" y="25" fill="#00ffff" font-size="11" font-weight="bold">L(x) - Perímetro (m)</text>
+                            <text x="560" y="290" fill="#00ffff" font-size="11" font-weight="bold" text-anchor="end">x - Base (m)</text>
+                            
+                            <!-- Plot Curve L(x) = x + 2000/x -->
+                            <path d="M 90 40 L 115 163.4 L 140 220 L 165 250 L 190 266.7 L 215 275.7 L 240 280 L 263.6 281.1 L 290 280 L 340 273.3 L 390 262.9 L 440 250 L 490 235.6 L 540 220" fill="none" stroke="#00ffff" stroke-width="3" filter="url(#neon-glow-cyan)" />
+                            
+                            <!-- Limit dashed line at x=100 -->
+                            <line x1="540" y1="20" x2="540" y2="300" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4 4" />
+                            <text x="535" y="40" fill="#ffffff" font-size="10" text-anchor="end">Limite da Sede (x=100)</text>
+                            
+                            <!-- Point Dashed Lines (for x=44.72, y=89.44) -->
+                            <line x1="263.6" y1="281.1" x2="263.6" y2="300" stroke="#ff00ff" stroke-width="1.5" stroke-dasharray="4 4" />
+                            <line x1="40" y1="281.1" x2="263.6" y2="281.1" stroke="#ff00ff" stroke-width="1.5" stroke-dasharray="4 4" />
+                            
+                            <!-- Point Highlight Circle -->
+                            <circle cx="263.6" cy="281.1" r="6" fill="#ff00ff" stroke="#ffffff" stroke-width="2" filter="url(#neon-glow-magenta)" />
+                            
+                            <!-- Point Label -->
+                            <text x="263.6" y="260" fill="#ff00ff" font-size="12" font-weight="bold" text-anchor="middle" filter="url(#neon-glow-magenta)">Mínimo: (44.72, 89.44)</text>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 15: Encerramento -->
+            <section>
+                <div style="height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+                    <div class="hud-wrapper">
+                        <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
+                        <h1 class="title-cyan" style="font-size: 5em !important; letter-spacing: 15px; margin: 40px !important;">OBRIGADO</h1>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/math/math.min.js"></script>
+    <script>
+        let isMobile = window.innerWidth <= 768;
+        Reveal.initialize({
+            hash: true,
+            width: isMobile ? 800 : 1280,
+            height: isMobile ? 1200 : 720,
+            margin: isMobile ? 0.05 : 0.1,
+            transition: 'slide',
+            backgroundTransition: 'fade',
+            plugins: [ RevealMath.KaTeX ]
+        });
+        
+        // Menu de navegação (Miniaturas / Overview)
+        const menuBtn = document.createElement("div");
+        menuBtn.id = "custom-menu-btn";
+        menuBtn.innerHTML = "☰";
+        menuBtn.style.cssText = "position: fixed; top: 20px; left: 20px; z-index: 9999; cursor: pointer; color: var(--cyan); font-size: 30px; text-shadow: 0 0 10px var(--cyan); transition: 0.3s; padding: 5px 15px; border: 1px solid transparent; border-radius: 5px;";
+        menuBtn.onmouseover = () => menuBtn.style.border = "1px solid var(--cyan)";
+        menuBtn.onmouseout = () => menuBtn.style.border = "1px solid transparent";
+        menuBtn.title = "Ver Miniaturas dos Slides";
+        
+        document.body.appendChild(menuBtn);
+        
+        menuBtn.onclick = () => {
+            Reveal.toggleOverview();
+        };
+
+        // Passar slides para frente com clique do mouse
+        document.addEventListener('click', function(e) {
+            // Evita passar slide se clicar em elementos interativos, no menu ou nos widgets
+            if (e.target.closest('a') || e.target.closest('button') || e.target.closest('.controls') || e.target.closest('.playback') || e.target.closest('#custom-menu-btn') || e.target.closest('.interactive-widget') || e.target.closest('.hud-wrapper') || document.querySelector('.reveal').classList.contains('overview')) {
+                return;
+            }
+            Reveal.next();
+        });
+
+        // Navegação pelo scroll do mouse na visão de miniaturas (Overview)
+        let scrollTimeout;
+        document.addEventListener('wheel', function(e) {
+            if (document.querySelector('.reveal').classList.contains('overview')) {
+                if (scrollTimeout) return;
+                
+                if (e.deltaY < 0) {
+                    // Scroll para cima -> próximo slide (ignora fragmentos e reseta animações)
+                    Reveal.slide(Reveal.getIndices().h + 1, 0, -1);
+                } else if (e.deltaY > 0) {
+                    // Scroll para baixo -> slide anterior (ignora fragmentos e reseta animações)
+                    Reveal.slide(Reveal.getIndices().h - 1, 0, -1);
+                }
+                
+                // Pausa de 150ms para evitar que pule vários slides de uma vez
+                scrollTimeout = setTimeout(() => {
+                    scrollTimeout = null;
+                }, 150);
+            }
+        });
+    </script>
+</body>
+</html>
+
