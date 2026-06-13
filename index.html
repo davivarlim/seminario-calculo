@@ -211,7 +211,8 @@
             #header-logos { flex-direction: row !important; flex-wrap: wrap !important; justify-content: space-between !important; }
             #header-logos > div:nth-child(2) { order: 3; width: 100%; margin-top: 20px; }
             .hide-mobile { display: none !important; }
-            .obrigado-title { font-size: 2.8em !important; letter-spacing: 5px !important; margin: 20px !important; }
+            .obrigado-title { font-size: 1.8em !important; letter-spacing: 2px !important; margin: 10px !important; white-space: nowrap !important; }
+            .interactive-widget > div { max-width: 100% !important; }
         }
     </style>
 </head>
@@ -952,11 +953,9 @@
                         <div class="katex" style="font-size: 1.1em !important;">$$f(x) = x^n \rightarrow f'(x) = n \cdot x^{n-1}$$</div>
                     </div>
 
-                    <div class="formula-box fragment" style="padding: 15px 30px; margin: 0 auto; display: block; width: fit-content; border-color: var(--magenta); box-shadow: 0 0 10px rgba(255,0,255,0.4);">
-                        <div class="katex" style="font-size: 1.1em !important; color: var(--magenta) !important; text-shadow: 0 0 10px var(--magenta);">
-                            $$L'(-2000x^{-2}) \Rightarrow -2 \cdot (-2000x^{-2-1})$$
-                            $$\Rightarrow 4000x^{-3} \Rightarrow \frac{4000}{x^3}$$
-                        </div>
+                    <div class="formula-box fragment" style="padding: 15px 15px; margin: 0 auto; display: block; width: fit-content; border-color: var(--magenta); box-shadow: 0 0 10px rgba(255,0,255,0.4);">
+                        <div class="katex" style="font-size: 1.1em !important; color: var(--magenta) !important; text-shadow: 0 0 10px var(--magenta); margin-bottom: 5px;">$$L'(-2000x^{-2}) \Rightarrow -2 \cdot (-2000x^{-2-1})$$</div>
+                        <div class="katex" style="font-size: 1.1em !important; color: var(--magenta) !important; text-shadow: 0 0 10px var(--magenta);">$$\Rightarrow 4000x^{-3} \Rightarrow \frac{4000}{x^3}$$</div>
                     </div>
                 </div>
             </section>
